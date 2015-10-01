@@ -141,9 +141,18 @@ class DemoController extends Controller
      */
     public function showBlogPostAction(Location $location, $viewType, $layout = false, array $params = array())
     {
-        // We need the author, whatever the view type is.
         $repository = $this->getRepository();
-        $author = $repository->getUserService()->loadUser($location->getContentInfo()->ownerId);
+        // When previewing first draft there is no location id
+        if ( $locationId === null && isset( $params['isPreview'] ) && $params['isPreview'] == true )
+        {
+            $location = $params['location'];
+        }
+        else
+        {
+            $location = $repository->getLocationService()->loadLocation( $locationId );
+        }
+        // We need the author, whatever the view type is.
+        $author = $repository->getUserService()->loadUser( $location->getContentInfo()->ownerId );
 
         // TODO once the keyword service is available, load the number of keyword for each keyword
 
